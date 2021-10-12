@@ -6,7 +6,7 @@
 
 
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TransportProblem {
@@ -16,6 +16,11 @@ public class TransportProblem {
     State state;
     State finalState;
     List<State> solution = new ArrayList<>();
+    LinkedList<State> queue=new LinkedList<State>();
+    
+    LinkedList<Integer> queue1=new LinkedList<Integer>();
+    LinkedList<Integer> queue2=new LinkedList<Integer>();
+    
 
     public void initialize(int n) {
         this.state = new State();
@@ -40,7 +45,7 @@ public class TransportProblem {
         System.out.println("Final state: " + finalState);
     }
 
-    public void transition(State state, int p1, int p2) {
+    public State transition(State state, int p1, int p2) {
 
 
         if (state.boatSide == 1) {
@@ -55,7 +60,7 @@ public class TransportProblem {
             if (p2 != -1)
                 state.couples.set(p2, 1);
         }
-
+        return state;
     }
 
     public boolean isWife(int index) {
@@ -148,5 +153,73 @@ public class TransportProblem {
 
     }
 
+public void bfs(){
 
+    queue1.add(0);
+    queue2.add(1);
+    State state1=new State();
+    state1.boatSide=state.boatSide;
+    for(int k=0;k<state.couples.size();k++){
+        state1.couples.add(state.couples.get(k));
+        }
+    state1=transition(state1, 0,1);
+    queue.add(state1);
+     
+    if(isFinal(state1))
+        solution.add(state1);
+    else{
+    
+    while(!queue.isEmpty()){          
+    for (int i=0;i<2*n;i++){
+        for(int j=i+1;j<2*n;j++){
+        if(i!=j){
+        if(queue1.getLast()!=i||queue2.getLast()!=j)
+        if(this.validation(state, i, j)) { 
+                queue1.add(i);
+                queue2.add(j);
+                State state2=new State();
+                state2.boatSide=state.boatSide;
+                for(int k=0;k<state.couples.size();k++){
+                    state2.couples.add(state.couples.get(k));
+                }
+                state2=this.transition(state2, i,j);
+                queue.add(state2);
+        }
+        if(queue1.getLast()!=i||queue2.getLast()!=-1)
+        if(this.validation(state, i, -1)) { 
+                queue1.add(i);
+                queue2.add(-1);
+                State state2=new State();
+                state2.boatSide=state.boatSide;
+                for(int k=0;k<state.couples.size();k++){
+                    state2.couples.add(state.couples.get(k));
+                }
+                state2=this.transition(state2, i,-1);
+                queue.add(state2);
+        }
+        if((queue1.getLast()!=j)||(queue2.getLast()!=-1))
+        if(this.validation(state, j, -1)) {
+                queue1.add(j);
+                queue2.add(-1);
+                State state2=new State();
+                state2.boatSide=state.boatSide;
+                for(int k=0;k<state.couples.size();k++){
+                    state2.couples.add(state.couples.get(k));
+                }
+                state2=this.transition(state2, j,-1);
+                queue.add(state2);
+        }
+       
+        }
+        }
+    }
+    
+    
+       state=queue.poll();
+       solution.add(state);
+       if(isFinal(state)) break;
+   
+    }
+    }
+    }
 }
