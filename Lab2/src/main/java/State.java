@@ -2,10 +2,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class State {
+public class State implements Cloneable{
 
     List<Integer> couples;
     int boatSide;
+
+    public State(State state){
+        this.couples =  new ArrayList<>(state.couples);
+        this.boatSide = state.boatSide;
+
+    }
 
     public State() {
         this.couples = new ArrayList<>();
@@ -30,5 +36,10 @@ public class State {
     @Override
     public int hashCode() {
         return Objects.hash(couples, boatSide);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException{
+        return super.clone();
     }
 }
